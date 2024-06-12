@@ -191,5 +191,19 @@ app.get("/getProduct/name/:name", (req, res) => {
   });
 });
 
+// Exercise 5
+app.delete("/deleteProduct/id/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = `delete from product where id=${id}`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    console.log(result);
+    result.affectedRows === 0
+      ? res.status(400).send("Product Id does not exist!")
+      : res.status(200).send("Product deleted...");
+  });
+});
+
 // PORT
 app.listen(PORT, () => console.log("Listening to PORT " + PORT));
