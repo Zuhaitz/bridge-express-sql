@@ -78,5 +78,48 @@ app.post("/addProduct", (req, res) => {
   });
 });
 
+// Exercise 3
+app.put("/updateCategory/id/:id", (req, res) => {
+  const id = req.params.id;
+
+  const { name } = req.body;
+  if (!name) return res.status(400).send();
+
+  const category = { name };
+  const sql = `update category set ? where id=${id}`;
+
+  db.query(sql, category, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    console.log(result);
+    result.affectedRows === 0
+      ? res.status(400).send("Category Id does not exist!")
+      : res.status(200).send("Category modified...");
+  });
+});
+
+app.put("/updateProduct/id/:id", (req, res) => {
+  const id = req.params.id;
+
+  const { name, description, category_id } = req.body;
+  if (!name && !description && !category_id) return res.status(400).send();
+
+  const product = Object.assign(
+    {},
+    name && { name },
+    description && { description },
+    category_id && { category_id }
+  );
+
+  const sql = `update product set ? where id=${id}`;
+
+  db.query(sql, product, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    console.log(result);
+    result.affectedRows === 0
+      ? res.status(400).send("Category Id does not exist!")
+      : res.status(200).send("Category modified...");
+  });
+});
+
 // PORT
 app.listen(PORT, () => console.log("Listening to PORT " + PORT));
