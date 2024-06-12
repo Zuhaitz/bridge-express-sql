@@ -121,5 +121,75 @@ app.put("/updateProduct/id/:id", (req, res) => {
   });
 });
 
+// Exercise 4
+app.get("/getProducts", (req, res) => {
+  const sql = `select name, description from product`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getCategories", (req, res) => {
+  const sql = `select name from category`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getProductsCategory", (req, res) => {
+  const sql = `
+    select product.name, product.description, category.name as category 
+    from product inner join category 
+    on product.category_id = category.id`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getProduct/id/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = `select name, description from product where id=${id}`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getProductsDesc", (req, res) => {
+  const sql = `select name, description from product order by name desc`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getCategory/id/:id", (req, res) => {
+  const id = req.params.id;
+  const sql = `select name from category where id=${id}`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
+app.get("/getProduct/name/:name", (req, res) => {
+  const name = req.params.name;
+  const sql = `select name, description from product where name='${name}'`;
+
+  db.query(sql, (err, result) => {
+    if (err) return res.status(400).send(err.code);
+    res.send(result);
+  });
+});
+
 // PORT
 app.listen(PORT, () => console.log("Listening to PORT " + PORT));
