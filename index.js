@@ -15,6 +15,8 @@ const db = mysql.createConnection({
 
 db.connect();
 
+app.use("/products", require("./routes/products"));
+
 // Exercise 1
 app.get("/createTableCategory", (req, res) => {
   const sql = `create table category(
@@ -64,20 +66,6 @@ app.post("/addCategory", (req, res) => {
   });
 });
 
-app.post("/addProduct", (req, res) => {
-  const { name, description, category_id } = req.body;
-  if (!name || !description || !category_id) return res.status(400).send();
-
-  const product = { name, description, category_id };
-  const sql = `insert into product set ?`;
-
-  db.query(sql, product, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    console.log(result);
-    res.status(201).send("Product added...");
-  });
-});
-
 // Exercise 3
 app.put("/updateCategory/id/:id", (req, res) => {
   const id = req.params.id;
@@ -97,73 +85,9 @@ app.put("/updateCategory/id/:id", (req, res) => {
   });
 });
 
-app.put("/updateProduct/id/:id", (req, res) => {
-  const id = req.params.id;
-
-  const { name, description, category_id } = req.body;
-  if (!name && !description && !category_id) return res.status(400).send();
-
-  const product = Object.assign(
-    {},
-    name && { name },
-    description && { description },
-    category_id && { category_id }
-  );
-
-  const sql = `update product set ? where id=${id}`;
-
-  db.query(sql, product, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    console.log(result);
-    result.affectedRows === 0
-      ? res.status(400).send("Category Id does not exist!")
-      : res.status(200).send("Category modified...");
-  });
-});
-
 // Exercise 4
-app.get("/getProducts", (req, res) => {
-  const sql = `select name, description from product`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    res.send(result);
-  });
-});
-
 app.get("/getCategories", (req, res) => {
   const sql = `select name from category`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    res.send(result);
-  });
-});
-
-app.get("/getProductsCategory", (req, res) => {
-  const sql = `
-    select product.name, product.description, category.name as category 
-    from product inner join category 
-    on product.category_id = category.id`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    res.send(result);
-  });
-});
-
-app.get("/getProduct/id/:id", (req, res) => {
-  const id = req.params.id;
-  const sql = `select name, description from product where id=${id}`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    res.send(result);
-  });
-});
-
-app.get("/getProductsDesc", (req, res) => {
-  const sql = `select name, description from product order by name desc`;
 
   db.query(sql, (err, result) => {
     if (err) return res.status(400).send(err.code);
@@ -178,30 +102,6 @@ app.get("/getCategory/id/:id", (req, res) => {
   db.query(sql, (err, result) => {
     if (err) return res.status(400).send(err.code);
     res.send(result);
-  });
-});
-
-app.get("/getProduct/name/:name", (req, res) => {
-  const name = req.params.name;
-  const sql = `select name, description from product where name='${name}'`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    res.send(result);
-  });
-});
-
-// Exercise 5
-app.delete("/deleteProduct/id/:id", (req, res) => {
-  const id = req.params.id;
-  const sql = `delete from product where id=${id}`;
-
-  db.query(sql, (err, result) => {
-    if (err) return res.status(400).send(err.code);
-    console.log(result);
-    result.affectedRows === 0
-      ? res.status(400).send("Product Id does not exist!")
-      : res.status(200).send("Product deleted...");
   });
 });
 
