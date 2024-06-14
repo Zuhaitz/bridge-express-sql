@@ -14,7 +14,7 @@ app.get("/database", (req, res) => {
   const sql = "create database " + process.env.DB_NAME;
 
   db.query(sql, (err, result) => {
-    if (err) res.status(400).send(err);
+    if (err) res.status(400).send(err.code);
     res.send("Database created...");
   });
 });
