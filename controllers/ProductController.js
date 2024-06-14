@@ -1,6 +1,24 @@
 const db = require("../config/database");
 
 const ProductController = {
+  table(req, res) {
+    const sql = `create table product(
+      id int AUTO_INCREMENT,
+      name VARCHAR(255),
+      description VARCHAR(255),
+      category_id int,
+      PRIMARY KEY(id),
+      FOREIGN KEY (category_id) REFERENCES category(id)
+    )`;
+
+    db.query(sql, (err, result) => {
+      if (err) return res.status(400).send(err.code);
+
+      console.log(result);
+      res.send("Product table created...");
+    });
+  },
+
   get(req, res) {
     const sql = `select name, description from product`;
 
